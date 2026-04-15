@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.pipeworx-io/census-trade",
+  "title": "census trade",
+  "description": "Census Trade MCP — US Census Bureau International Trade data",
+  "version": "0.1.0",
+  "websiteUrl": "https://pipeworx.io/packs/census-trade",
+  "repository": {
+    "url": "https://github.com/pipeworx-io/mcp-census-trade",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://gateway.pipeworx.io/census-trade/mcp"
+    }
+  ]
+}
