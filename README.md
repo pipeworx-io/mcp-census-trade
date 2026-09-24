@@ -2,7 +2,7 @@
 
 Census Trade MCP — US Census Bureau International Trade data
 
-Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1476+ live data sources.
+Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents to 1679+ live data sources.
 
 ## Tools
 
@@ -11,7 +11,7 @@ Part of [Pipeworx](https://pipeworx.io) — an MCP gateway connecting AI agents 
 | `census_imports` | Search US import data by HS commodity code and/or country. Returns import values, quantities, and commodity details. Pass `country` as a plain English name (e.g. "China"). Omit hs_code for total imports from a country; omit country for all countries combined. |
 | `census_exports` | Search US export data by HS commodity code and/or country. Returns export values, quantities, and commodity details. Pass `country` as a plain English name (e.g. "Mexico"). Omit hs_code for total exports to a country; omit country for all countries combined. |
 | `census_trade_balance` | Check US trade balance with a specific country for a given year. Returns net trade value and breakdown by end-use commodity category. |
-| `census_trade_trends` | Get monthly US trade trends for a commodity and/or country over time. Returns month-by-month values to identify seasonal patterns and shifts. |
+| `census_trade_trends` | Monthly US trade trends with ONE trading partner — month-by-month imports and exports for a country, optionally narrowed to an HS commodity, to show seasonality and shifts. A country is required: an unfiltered monthly query spans every partner and the Census API cannot return it in time. For all-countries totals use census_imports / census_exports instead. |
 
 ## Quick Start
 
@@ -57,9 +57,45 @@ directly, instead of just this one's:
 }
 ```
 
-Both URLs reach the same gateway and the same 1476+ data sources. The
+Both URLs reach the same gateway and the same 1679+ data sources. The
 only difference is which pack's tools are listed **directly**; `ask_pipeworx`
 reaches all of them from either one.
+
+## No MCP client? Call it over HTTP
+
+```bash
+curl -X POST https://gateway.pipeworx.io/v1/tools/census_imports \
+  -H 'Content-Type: application/json' \
+  -d '{"country":"European Union","hs_code":"30","year":"2024"}'
+```
+
+No account needed for the first calls. Inspect any tool: `GET https://gateway.pipeworx.io/v1/tools/census_imports`. Find one: `POST https://gateway.pipeworx.io/v1/tools/search_packs` with `{"query":"..."}`.
+
+## Standalone (no gateway account)
+
+This package also runs as a local stdio MCP server — no Pipeworx account, no
+gateway round-trip:
+
+```json
+{
+  "mcpServers": {
+    "census-trade": {
+      "command": "npx",
+      "args": ["-y", "@pipeworx/mcp-census-trade"]
+    }
+  }
+}
+```
+
+Or run it directly to confirm it starts:
+
+```bash
+npx -y @pipeworx/mcp-census-trade
+```
+
+It speaks MCP over stdin/stdout and answers `initialize`/`tools/list`/`tools/call`
+for **only** this pack's tools — none of the shared meta-tools the gateway
+connection above adds. Same source, same tools, no ask_pipeworx routing.
 
 ## Using with ask_pipeworx
 
@@ -80,13 +116,3 @@ The gateway picks the right tool and fills the arguments automatically.
 ## License
 
 MIT
-
-## No MCP client? Call it over HTTP
-
-```bash
-curl -X POST https://gateway.pipeworx.io/v1/tools/census_imports \
-  -H 'Content-Type: application/json' \
-  -d '{"country":"European Union","hs_code":"30","year":"2024"}'
-```
-
-No account needed for the first calls. Inspect any tool: `GET https://gateway.pipeworx.io/v1/tools/census_imports`. Find one: `POST https://gateway.pipeworx.io/v1/tools/search_packs` with `{"query":"..."}`.
